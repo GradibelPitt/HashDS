@@ -48,7 +48,7 @@ public class HashDS<T> implements SequenceInterface<T> {
         this.tail = null;
 
         @SuppressWarnings("unchecked")
-        this.hashTable = (HashEntry<T>[]) new HashEntry[capacity];
+        this.hashTable = (HashEntry<T>[]) new HashEntry(capacity);
 
     }
 
@@ -61,7 +61,7 @@ public class HashDS<T> implements SequenceInterface<T> {
         this.tail = null;
 
         @SuppressWarnings("unchecked")
-        this.hashTable = (HashEntry<T, Integer>[]) new HashEntry[capacity];
+        this.hashTable = (HashEntry<T, Integer>[]) new HashEntry(capacity);
 
         //deep copy LinkedList
         if (other.head != null) {

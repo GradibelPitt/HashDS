@@ -1,4 +1,3 @@
-import EmptySequenceException
 import java.util.NoSuchElementException;
 
 public class HashDS<T> implements SequenceInterface<T> {

@@ -166,7 +166,7 @@ public int getFrequencyOf(T item) {
     int index = hash(item);
     while (hashTable[index] != null) {
         if (hashTable[index].key.equals(item)) {
-            return hashTable[index].frequency;
+            return hashTable[index].getValue;
         }
         index = (index + 1) % hashTable.length;
     }
@@ -254,7 +254,8 @@ public boolean remove(T item) {
 private void resize() {
     capacity *= 2;
     HashEntry<T, Integer>[] newHashTable = (HashEntry<T, Integer>[]) new HashEntry[capacity];
-    for (HashEntry<T> entry : hashTable) {
+
+    for (HashEntry<T, Integer> entry : hashTable) {
         if (entry != null) {
             int index = hash(entry.getKey());
             while (newHashTable[index] != null) {
@@ -263,6 +264,7 @@ private void resize() {
             newHashTable[index] = entry;
         }
     }
+
     hashTable = newHashTable;
 }
 

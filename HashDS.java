@@ -43,20 +43,25 @@ public class HashDS<T> implements SequenceInterface<T> {
     //default consturctor 
     public HashDS() {
         this.capacity = 16;
-        @SuppressWarnings("unchecked")
-        this.hashTable = (HashEntry<T>[]) new HashEntry[capacity];
         this.size = 0;
         this.head = null;
         this.tail = null;
+
+        @SuppressWarnings("unchecked")
+        this.hashTable = (HashEntry<T>[]) new HashEntry[capacity];
 
     }
 
     //deep copy constructor
     public HashDS(HashDS<T> other) {
         this.capacity = other.capacity;
+
+        this.size = other.size;
+        this.head = null;
+        this.tail = null;
+
         @SuppressWarnings("unchecked")
         this.hashTable = (HashEntry<T, Integer>[]) new HashEntry[capacity];
-        this.size = other.size;
 
         //deep copy LinkedList
         if (other.head != null) {

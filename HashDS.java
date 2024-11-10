@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.NoSuchElementException;
 
 public class HashDS<T> implements SequenceInterface<T> {
@@ -17,27 +18,32 @@ public class HashDS<T> implements SequenceInterface<T> {
         }
     }
 
-    private static class HashEntry<K, V> {
-        K key;
-        V value;
+    private static class HashEntry<T> {
+        T item;
+        int frequency;
 
-        HashEntry(K key, V value) {
-            this.key = key;
-            this.value = value;
+        HashEntry(T item) {
+            this.item = item;
+            this.frequency = 1;
         }
 
-        public K getKey() {
-            return key;
+        public T getItem() {
+            return item;
         }
 
-        public V getValue() {
-            return value;
+        public int getFrequency() {
+            return frequency;
         }
 
-        public void setValue(V value) {
-            this.value = value;
+        public void incrementFrequency() {
+            frequency++;
         }
-    }
+
+        public void setFrequency(int frequency) {
+            this.frequency = frequency;
+        }
+    }    
+
 
 
     //default consturctor 
@@ -46,10 +52,11 @@ public class HashDS<T> implements SequenceInterface<T> {
         this.size = 0;
         this.head = null;
         this.tail = null;
+        this.hashTable = (HashEntry<T>[]) new ArrayList<>(capacity);
 
-        @SuppressWarnings("unchecked")
-        this.hashTable = (HashEntry<T>[]) new HashEntry(capacity);
-
+        for (int i = 0; i < capacity; i++) {
+            hashTable.add(null);
+        }
     }
 
     //deep copy constructor
@@ -60,32 +67,19 @@ public class HashDS<T> implements SequenceInterface<T> {
         this.head = null;
         this.tail = null;
 
-        @SuppressWarnings("unchecked")
-        this.hashTable = (HashEntry<T, Integer>[]) new HashEntry(capacity);
+        this.hashTable = new ArrayList<>(capacity);
 
-        //deep copy LinkedList
-        if (other.head != null) {
-            this.head = new Node<>(other.head.data);
-            Node<T> current = this.head;
-            Node<T> otherCurrent = other.head.next;
-            while (otherCurrent != null) {
-                current.next = new Node<>(otherCurrent.data);
-                current = current.next;
-                otherCurrent = otherCurrent.next;
-            }
-            this.tail = current;
-        }
-
-        //deep copy hashTable
-        for (int i = 0; i < other.capacity; i++) {
-            if (other.hashTable[i] != null) {
-                T key = other.hashTable[i].getKey();
-                Integer value = other.hashTable[i].getValue();
-                this.hashTable[i] = new HashEntry<>(key, value);
+        for (int i = 0; i < capacity; i++) {
+            if (other.hashTable.get(i) != null) {
+                T item = other.hashTable.get(i).getItem();
+                int frequency = other.hashTable.get(i).getFrequency();
+                hashTable.add(new HashEntry<>(item));
+                hashTable.get(i).setFrequency(frequency);
+            } else {
+                hashTable.add(null);
             }
         }
-
-}
+    }
 
 
 @Override
@@ -185,7 +179,11 @@ public void clear() {
     head = null;
     tail = null;
     size = 0;
-    hashTable = new HashEntry[capacity];
+    hashTable.clear();
+
+    for (int i = 0; i < capacity; i++) {
+        hashTable.add(null);
+    }    
 }
 
 @Override
@@ -229,14 +227,14 @@ public T deleteTail() {
 
 private void updateHashTable(T item) {
     int index = hash(item);
-    while (hashTable[index] != null) {
-        if (hashTable[index].getKey().equals(item)) {
-            hashTable[index].setValue(hashTable[index].getValue() + 1);
-            return;    
+    while (hashTable.get(index) != null) {
+        if (hashTable.get(index).getItem().equals(item)) {
+            hashTable.get(index).incrementFrequency();
+            return;
         }
-        index = (index + 1) % hashTable.length;
+        index = (index + 1) % capacity;
     }
-    hashTable[index] = new HashEntry<>(item, 1);
+    hashTable.set(index, new HashEntry<>(item));
     size++;
 }
 
@@ -247,28 +245,32 @@ private int hash(T item) {
 @Override
 public boolean remove(T item) {
     int index = hash(item);
-    while (hashTable[index] != null) {
-        if (hashTable[index].getKey().equals(item)) {
-            hashTable[index] = null;
+    while (hashTable.get(index) != null) {
+        if (hashTable.get(index).getItem().equals(item)) {
+            hashTable.set(index, null);
             size--;
             return true;
         }
-        index = (index + 1) % hashTable.length;
+        index = (index + 1) % capacity;
     }
     return false;
 }
 
 private void resize() {
     capacity *= 2;
-    HashEntry<T, Integer>[] newHashTable = (HashEntry<T, Integer>[]) new HashEntry[capacity];
+    ArrayList<HashEntry<T, Integer>> newHashTable = new ArrayList<>(capacity);
+
+    for (int i = 0; i < capacity; i++) {
+        newHashTable.add(null);
+    }
 
     for (HashEntry<T, Integer> entry : hashTable) {
         if (entry != null) {
             int index = hash(entry.getKey());
-            while (newHashTable[index] != null) {
-                index = (index + 1) % newHashTable.length;
+            while (newHashTable.get(index) != null) {
+                index = (index + 1) % capacity;
             }
-            newHashTable[index] = entry;
+            newHashTable.set(index, entry)
         }
     }
 
@@ -281,17 +283,16 @@ public String toString() {
     return "";
    }
 
-   String result = "";
-   Node<T> current = head;
+StringBuilder result = new StringBuilder();
+    Node<T> current = head;
 
-   while (current != null) {
-        result += current.data;
+    while (current != null) {
+        result.append(current.data);
         current = current.next;
     }
 
-    return result;
+    return result.toString();
     }
-  
 }
 
 

@@ -43,6 +43,7 @@ public class HashDS<T> implements SequenceInterface<T> {
     //default consturctor 
     public HashDS() {
         this.capacity = 16;
+        @SuppressWarnings("unchecked")
         this.hashTable = (HashEntry<T>[]) new HashEntry[capacity];
         this.size = 0;
         this.head = null;
@@ -53,6 +54,7 @@ public class HashDS<T> implements SequenceInterface<T> {
     //deep copy constructor
     public HashDS(HashDS<T> other) {
         this.capacity = other.capacity;
+        @SuppressWarnings("unchecked")
         this.hashTable = (HashEntry<T, Integer>[]) new HashEntry[capacity];
         this.size = other.size;
 
@@ -166,7 +168,7 @@ public int getFrequencyOf(T item) {
     int index = hash(item);
     while (hashTable[index] != null) {
         if (hashTable[index].key.equals(item)) {
-            return hashTable[index].getValue;
+            return hashTable[index].getValue();
         }
         index = (index + 1) % hashTable.length;
     }

@@ -4,7 +4,7 @@ import java.util.NoSuchElementException;
 public class HashDS<T> implements SequenceInterface<T> {
     private Node<T> head;
     private Node<T> tail;
-    private HashEntry<T, Integer>[] hashTable;
+    private Arraylist<HashEntry<T>> hashTable;
     private int size;
     private int capacity;   
 
@@ -52,7 +52,7 @@ public class HashDS<T> implements SequenceInterface<T> {
         this.size = 0;
         this.head = null;
         this.tail = null;
-        this.hashTable = (HashEntry<T>[]) new ArrayList<>(capacity);
+        this.hashTable = new ArrayList<>(capacity);
 
         for (int i = 0; i < capacity; i++) {
             hashTable.add(null);
@@ -114,6 +114,19 @@ public void prefix(T item) {
     if ((double) size / capacity >= 0.5) {
         resize();
     }
+}
+
+private void updateHashTable(T item) {
+    int index = hash(item);
+    while (hashTable.get(index) != null) {
+        if (hashTable.get(index).getItem().equals(item)) {
+            hashTable.get(index).incrementFrequency();
+            return;
+        }
+        index = (index + 1) % capacity;
+    }
+    hashTable.set(index, new HashEntry<>(item));
+    size++;
 }
 
 @Override
@@ -239,7 +252,7 @@ private void updateHashTable(T item) {
 }
 
 private int hash(T item) {
-    return Math.abs(item.hashCode()) % hashTable.length;
+    return Math.abs(item.hashCode()) % capacity;
 }
 
 @Override
@@ -258,7 +271,7 @@ public boolean remove(T item) {
 
 private void resize() {
     capacity *= 2;
-    ArrayList<HashEntry<T, Integer>> newHashTable = new ArrayList<>(capacity);
+    ArrayList<HashEntry<T>> newHashTable = new ArrayList<>(capacity);
 
     for (int i = 0; i < capacity; i++) {
         newHashTable.add(null);
@@ -266,7 +279,7 @@ private void resize() {
 
     for (HashEntry<T, Integer> entry : hashTable) {
         if (entry != null) {
-            int index = hash(entry.getKey());
+            int index = hash(entry.getItem());
             while (newHashTable.get(index) != null) {
                 index = (index + 1) % capacity;
             }
@@ -283,7 +296,7 @@ public String toString() {
     return "";
    }
 
-StringBuilder result = new StringBuilder();
+    StringBuilder result = new StringBuilder();
     Node<T> current = head;
 
     while (current != null) {
@@ -292,7 +305,7 @@ StringBuilder result = new StringBuilder();
     }
 
     return result.toString();
-    }
+  }
 }
 
 

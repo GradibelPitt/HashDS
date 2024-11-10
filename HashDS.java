@@ -270,7 +270,7 @@ private void resize() {
             while (newHashTable.get(index) != null) {
                 index = (index + 1) % capacity;
             }
-            newHashTable.set(index, entry)
+            newHashTable.set(index, entry);
         }
     }
 

@@ -3,7 +3,7 @@ import java.util.NoSuchElementException;
 public class HashDS<T> implements SequenceInterface<T> {
     private Node<T> head;
     private Node<T> tail;
-    private HashEntry<T>[] hashTable;
+    private HashEntry<T, Integer>[] hashTable;
     private int size;
     private int capacity;   
 
@@ -237,12 +237,26 @@ private int hash(T item) {
     return Math.abs(item.hashCode()) % hashTable.length;
 }
 
+@Override
+public boolean remove(T item) {
+    int index = hash(item);
+    while (hashTable[index] != null) {
+        if (hashTable[index].getKey().equals(item)) {
+            hashTable[index] = null;
+            size--;
+            return true;
+        }
+        index = (index + 1) % hashTable.length;
+    }
+    return false;
+}
+
 private void resize() {
     capacity *= 2;
-    HashEntry<T>[] newHashTable = new HashEntry[capacity];
+    HashEntry<T, Integer>[] newHashTable = (HashEntry<T, Integer>[]) new HashEntry[capacity];
     for (HashEntry<T> entry : hashTable) {
         if (entry != null) {
-            int index = hash(entry.key);
+            int index = hash(entry.getKey());
             while (newHashTable[index] != null) {
                 index = (index + 1) % newHashTable.length;
             }

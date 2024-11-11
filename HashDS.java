@@ -54,26 +54,27 @@ public class HashDS<T> implements SequenceInterface<T> {
         for (int i = 0; i < capacity; i++) {
             hashTable.add(null);
         }
+
+    //deep copy linkedList
+        if (other.head != null) {
+        this.head = new Node<>(other.head.data);
+        Node<T> current = this.head;
+        Node<T> otherCurrent = other.head.next;
+        while (otherCurrent != null) {
+            current.next = new Node<>(otherCurrent.data);
+            current = current.next;
+            otherCurrent = otherCurrent.next;
+        }
+        this.tail = current;
     }
 
-    //deep copy constructor
-    public HashDS(HashDS<T> other) {
-        this.capacity = other.capacity;
-
-        this.size = other.size;
-        this.head = null;
-        this.tail = null;
-
-        this.hashTable = new ArrayList<>(capacity);
-
+    //deep copy hashTable
         for (int i = 0; i < capacity; i++) {
             if (other.hashTable.get(i) != null) {
                 T item = other.hashTable.get(i).getItem();
                 int frequency = other.hashTable.get(i).getFrequency();
-                hashTable.add(new HashEntry<>(item));
-                hashTable.get(i).setFrequency(frequency);
-            } else {
-                hashTable.add(null);
+                this.hashTable.set(i, new HashEntry<>(item));
+                this.hashTable.get(i).setFrequency(frequency);          
             }
         }
     }
@@ -89,6 +90,7 @@ public class HashDS<T> implements SequenceInterface<T> {
             tail = newNode;
         }
         updateHashTable(item);
+        size++;
 
         if ((double) size / capacity >= 0.5) {
             resize();
@@ -266,7 +268,8 @@ public class HashDS<T> implements SequenceInterface<T> {
                 while (newHashTable.get(index) != null) {
                     index = (index + 1) % capacity;
                 }
-                newHashTable.set(index, entry);
+                newHashTable.set(index, new HashEntry<>(entry.getItem()));
+                newHashTable.get(index).setFrequency(entry.getFrequency());
             }
         }
 
@@ -283,7 +286,7 @@ public class HashDS<T> implements SequenceInterface<T> {
         Node<T> current = head;
 
         while (current != null) {
-            result.append(current.data);
+            result.append(current.data.toString());
             current = current.next;
         }
 

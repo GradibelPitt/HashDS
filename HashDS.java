@@ -71,10 +71,10 @@ public class HashDS<T> implements SequenceInterface<T> {
             if (other.hashTable.get(i) != null) {
                 T item = other.hashTable.get(i).getItem();
                 int frequency = other.hashTable.get(i).getFrequency();
-                hashTable.set(new HashEntry<>(item));
+                hashTable.set(i, new HashEntry<>(item));
                 hashTable.get(i).setFrequency(frequency);
             } else {
-                hashTable.set(null);
+                hashTable.set(i, (HashEntry<T>) null);
             }
         }
     }

@@ -8,7 +8,7 @@ public class HashDS<T> implements SequenceInterface<T> {
     private int capacity;   
 
     //class Node for LinkedList
-    private static class Node<T> {
+    private class Node<T> {
         T data;
         Node<T> next;
 
@@ -43,6 +43,7 @@ public class HashDS<T> implements SequenceInterface<T> {
         }
     }    
 
+
     //default consturctor 
     public HashDS() {
         this.capacity = 16;
@@ -54,48 +55,30 @@ public class HashDS<T> implements SequenceInterface<T> {
         for (int i = 0; i < capacity; i++) {
             hashTable.add(null);
         }
-
-    //deep copy linkedList
-        if (other.head != null) {
-        this.head = new Node<>(other.head.data);
-        Node<T> current = this.head;
-        Node<T> otherCurrent = other.head.next;
-        while (otherCurrent != null) {
-            current.next = new Node<>(otherCurrent.data);
-            current = current.next;
-            otherCurrent = otherCurrent.next;
-        }
-        this.tail = current;
     }
 
-    //deep copy hashTable
+    //deep copy constructor
+    public HashDS(HashDS<T> other) {
+        this.capacity = other.capacity;
+
+        this.size = other.size;
+        this.head = null;
+        this.tail = null;
+
+        this.hashTable = new ArrayList<>(capacity);
+
         for (int i = 0; i < capacity; i++) {
             if (other.hashTable.get(i) != null) {
                 T item = other.hashTable.get(i).getItem();
                 int frequency = other.hashTable.get(i).getFrequency();
-                this.hashTable.set(i, new HashEntry<>(item));
-                this.hashTable.get(i).setFrequency(frequency);          
+                hashTable.add(new HashEntry<>(item));
+                hashTable.get(i).setFrequency(frequency);
+            } else {
+                hashTable.set(null);
             }
         }
     }
 
-    @Override
-    public void append(T item) {
-        Node<T> newNode = new Node<>(item);
-        if (tail == null) {
-            head = newNode;
-            tail = newNode;
-        } else {
-            tail.next = newNode;
-            tail = newNode;
-        }
-        updateHashTable(item);
-        size++;
-
-        if ((double) size / capacity >= 0.5) {
-            resize();
-        }
-    }
 
     @Override
     public void prefix(T item) {
@@ -268,12 +251,30 @@ public class HashDS<T> implements SequenceInterface<T> {
                 while (newHashTable.get(index) != null) {
                     index = (index + 1) % capacity;
                 }
-                newHashTable.set(index, new HashEntry<>(entry.getItem()));
-                newHashTable.get(index).setFrequency(entry.getFrequency());
+                newHashTable.set(index, entry);
             }
         }
 
         hashTable = newHashTable;
+    }
+
+    
+    @Override
+    public void append(T item) {
+        Node<T> newNode = new Node<>(item);
+        if (tail == null) {
+            head = newNode;
+            tail = newNode;
+        } else {
+            tail.next = newNode;
+            tail = newNode;
+            size++;
+        }
+        updateHashTable(item);
+
+        if ((double) size / capacity >= 0.5) {
+            resize();
+        }
     }
 
     @Override
@@ -286,7 +287,7 @@ public class HashDS<T> implements SequenceInterface<T> {
         Node<T> current = head;
 
         while (current != null) {
-            result.append(current.data.toString());
+            result.append(current.data);
             current = current.next;
         }
 

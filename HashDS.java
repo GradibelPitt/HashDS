@@ -68,6 +68,10 @@ public class HashDS<T> implements SequenceInterface<T> {
         this.hashTable = new ArrayList<>(capacity);
 
         for (int i = 0; i < capacity; i++) {
+            hashTable.add(null);
+        }
+
+        for (int i = 0; i < capacity; i++) {
             if (other.hashTable.get(i) != null) {
                 T item = other.hashTable.get(i).getItem();
                 int frequency = other.hashTable.get(i).getFrequency();
@@ -113,21 +117,14 @@ public class HashDS<T> implements SequenceInterface<T> {
     @Override
     public T itemAt(int position) {
         if (position < 0 || position >= size) {
-            throw new IndexOutOfBoundsException("Invalid position: " + position);
+            throw new IndexOutOfBoundsException("Index out of bounds: " + index);
         }
 
         Node<T> current = head;
-        int currentIndex = 0;
-
-        while (current != null) {
-            if (currentIndex == position) {
-                return current.data;
-            }
+        for (int i = 0; i < index; i++){
             current = current.next;
-            currentIndex++;
         }
-
-        return null;
+        return current.data;
     }
 
     @Override
@@ -182,7 +179,7 @@ public class HashDS<T> implements SequenceInterface<T> {
 
     @Override
     public T deleteHead() {
-        if (isEmpty()) {
+        if (isEmpty() || head == null) {
             throw new EmptySequenceException("Cannot delete head: Sequence is empty.");
         }
 
@@ -198,7 +195,7 @@ public class HashDS<T> implements SequenceInterface<T> {
 
     @Override
     public T deleteTail() {
-        if (isEmpty()) {
+        if (isEmpty() || tail == null) {
             throw new EmptySequenceException("Cannot delete tail: Sequence is empty.");
         }
 
@@ -277,23 +274,15 @@ public class HashDS<T> implements SequenceInterface<T> {
         }
     }
 
+
     @Override
     public String toString() {
-        if (head == null) {
-            return "";
-        }
-
         StringBuilder result = new StringBuilder();
         Node<T> current = head;
-
         while (current != null) {
             result.append(current.data);
             current = current.next;
         }
-
         return result.toString();
     }
-}
-
-
 

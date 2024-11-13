@@ -83,6 +83,10 @@ public class HashDS<T> implements SequenceInterface<T> {
         }
     }
 
+    @Override
+    public int size() {
+        return size;
+    }
 
     @Override
     public void prefix(T item) {
@@ -111,7 +115,6 @@ public class HashDS<T> implements SequenceInterface<T> {
             index = (index + 1) % capacity;
         }
         hashTable.set(index, new HashEntry<>(item));
-        size++;
     }
 
     @Override
@@ -122,6 +125,9 @@ public class HashDS<T> implements SequenceInterface<T> {
 
         Node<T> current = head;
         for (int i = 0; i < index; i++){
+            if (current == null){
+                throw new IndexOutOfBoundsException("Index " + index + " is out of bounds. Size of list: " + size);
+            }
             current = current.next;
         }
         return current.data;
@@ -132,10 +138,7 @@ public class HashDS<T> implements SequenceInterface<T> {
         return size == 0;
     }
 
-    @Override
-    public int size() {
-        return size;
-    }
+
 
     @Override
     public T first() {
@@ -170,7 +173,7 @@ public class HashDS<T> implements SequenceInterface<T> {
         head = null;
         tail = null;
         size = 0;
-        hashTable.clear();
+        hashTable = new ArrayList<>(capacity);
 
         for (int i = 0; i < capacity; i++) {
             hashTable.add(null);
@@ -188,8 +191,9 @@ public class HashDS<T> implements SequenceInterface<T> {
         if (head == null) {
             tail = null;
         }
-
-        size--;
+        if (size > 0){
+            size--;
+        }
         return data;
     }
 
@@ -211,8 +215,9 @@ public class HashDS<T> implements SequenceInterface<T> {
             current.next = null;
             tail = current;
         }
-
-        size--;
+        if (size > 0){
+            size--;
+        }
         return data;
     }
 
@@ -265,8 +270,8 @@ public class HashDS<T> implements SequenceInterface<T> {
         } else {
             tail.next = newNode;
             tail = newNode;
-            size++;
         }
+        size++;
         updateHashTable(item);
 
         if ((double) size / capacity >= 0.5) {

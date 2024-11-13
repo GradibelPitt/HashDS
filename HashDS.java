@@ -115,8 +115,8 @@ public class HashDS<T> implements SequenceInterface<T> {
     }
 
     @Override
-    public T itemAt(int position) {
-        if (position < 0 || position >= size) {
+    public T itemAt(int index) {
+        if (index < 0 || index >= size) {
             throw new IndexOutOfBoundsException("Index out of bounds: " + index);
         }
 
@@ -286,4 +286,3 @@ public class HashDS<T> implements SequenceInterface<T> {
         return result.toString();
     }
 }
-

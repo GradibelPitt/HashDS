@@ -139,7 +139,7 @@ public class HashDS<T> implements SequenceInterface<T> {
 
     @Override
     public T first() {
-        if (isEmpty() || head == null) {
+        if (size == 0 || head == null) {
             throw new EmptySequenceException("Cannot retrieve first element: Sequence is empty.");
         }
         return head.data;

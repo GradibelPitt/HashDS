@@ -81,7 +81,7 @@ public class HashDS<T> implements SequenceInterface<T> {
                 hashTable.set(i, (HashEntry<T>) null);
             }
         }
-        
+
         Node<T> current = other.head;
         while (current != null) {
             this.append(current.data);
@@ -148,7 +148,7 @@ public class HashDS<T> implements SequenceInterface<T> {
 
     @Override
     public T first() {
-        if (isEmpty()) {
+        if (isEmpty() || head == null) {
             throw new EmptySequenceException("Cannot retrieve first element: Sequence is empty.");
         }
         return head.data;

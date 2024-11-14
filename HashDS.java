@@ -77,9 +77,7 @@ public class HashDS<T> implements SequenceInterface<T> {
                 int frequency = other.hashTable.get(i).getFrequency();
                 hashTable.set(i, new HashEntry<>(item));
                 hashTable.get(i).setFrequency(frequency);
-            } else {
-                hashTable.set(i, (HashEntry<T>) null);
-            }
+            } 
         }
 
         Node<T> current = other.head;
@@ -141,9 +139,8 @@ public class HashDS<T> implements SequenceInterface<T> {
 
     @Override
     public boolean isEmpty() {
-        return size == 0;
+        return size == 0 || head == null;
     }
-
 
 
     @Override

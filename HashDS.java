@@ -81,6 +81,12 @@ public class HashDS<T> implements SequenceInterface<T> {
                 hashTable.set(i, (HashEntry<T>) null);
             }
         }
+        
+        Node<T> current = other.head;
+        while (current != null) {
+            this.append(current.data);
+            current = current.next;
+        }
     }
 
     @Override

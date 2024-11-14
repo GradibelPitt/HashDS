@@ -1,5 +1,5 @@
 import java.util.ArrayList; 
-import exceptions.EmptySequenceException
+import EmptySequenceException
 
 public class HashDS<T> implements SequenceInterface<T> {
     private Node<T> head;

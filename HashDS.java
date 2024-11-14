@@ -138,12 +138,6 @@ public class HashDS<T> implements SequenceInterface<T> {
     }
 
     @Override
-    public boolean isEmpty() {
-        return size == 0 || head == null;
-    }
-
-
-    @Override
     public T first() {
         if (isEmpty() || head == null) {
             throw new EmptySequenceException("Cannot retrieve first element: Sequence is empty.");
@@ -158,6 +152,13 @@ public class HashDS<T> implements SequenceInterface<T> {
         }
         return tail.data;
     }
+    
+    
+    @Override
+    public boolean isEmpty() {
+        return size == 0 && head == null;
+    }
+
 
     @Override
     public int getFrequencyOf(T item) {

@@ -93,6 +93,46 @@ public class HashDS<T> implements SequenceInterface<T> {
         return size;
     }
 
+    private void resize() {
+        capacity *= 2;
+        ArrayList<HashEntry<T>> newHashTable = new ArrayList<>(capacity);
+
+        for (int i = 0; i < capacity; i++) {
+            newHashTable.add(null);
+        }
+
+        for (HashEntry<T> entry : hashTable) {
+            if (entry != null) {
+                int index = hash(entry.getItem());
+                while (newHashTable.get(index) != null) {
+                    index = (index + 1) % capacity;
+                }
+                newHashTable.set(index, entry);
+            }
+        }
+
+        hashTable = newHashTable;
+    }
+
+    
+    @Override
+    public void append(T item) {
+        Node<T> newNode = new Node<>(item);
+        if (tail == null) {
+            head = newNode;
+            tail = newNode;
+        } else {
+            tail.next = newNode;
+            tail = newNode;
+        }
+        size++;
+        updateHashTable(item);
+
+        if ((double) size / capacity >= 0.5) {
+            resize();
+        }
+    }
+
     @Override
     public void prefix(T item) {
         Node<T> newNode = new Node<>(item);
@@ -141,7 +181,7 @@ public class HashDS<T> implements SequenceInterface<T> {
     @Override
     public T first() {
         if (size == 0 || head == null) {
-            throw new EmptySequenceException("Cannot retrieve first element: Sequence is empty.");
+            return null;
         }
         return head.data;
     }
@@ -227,62 +267,48 @@ public class HashDS<T> implements SequenceInterface<T> {
     }
 
     private int hash(T item) {
-        return Math.abs(item.hashCode()) % capacity;
+        return (item.hashCode() & 0x7fffffff) % capacity; //this prevents from negative value that causes overflow
     }
 
     @Override
     public boolean remove(T item) {
         int index = hash(item);
+
+        //find item in the hash table
         while (hashTable.get(index) != null) {
             if (hashTable.get(index).getItem().equals(item)) {
                 hashTable.set(index, null);
-                size--;
-                return true;
+
+                //remove item from the linkedlist
+                Node<T> current = head;
+                Node<T> previous = null;
+
+                while (current != null) {
+                    if (current.data.equals(item)) {
+                        if(previous == null) { //removing head
+                            head = current.next;
+                            if(head == null) {
+                                tail = null; 
+                            }
+                        }else{
+                            previous.next = current.next;
+                            if (current == tail){
+                                tail = previous;
+                            }
+                        }
+                        size--;
+                        return true;
+                    }
+                    previous = current;
+                    current = current.next;
+                }
             }
             index = (index + 1) % capacity;
         }
+
         return false;
     }
 
-    private void resize() {
-        capacity *= 2;
-        ArrayList<HashEntry<T>> newHashTable = new ArrayList<>(capacity);
-
-        for (int i = 0; i < capacity; i++) {
-            newHashTable.add(null);
-        }
-
-        for (HashEntry<T> entry : hashTable) {
-            if (entry != null) {
-                int index = hash(entry.getItem());
-                while (newHashTable.get(index) != null) {
-                    index = (index + 1) % capacity;
-                }
-                newHashTable.set(index, entry);
-            }
-        }
-
-        hashTable = newHashTable;
-    }
-
-    
-    @Override
-    public void append(T item) {
-        Node<T> newNode = new Node<>(item);
-        if (tail == null) {
-            head = newNode;
-            tail = newNode;
-        } else {
-            tail.next = newNode;
-            tail = newNode;
-        }
-        size++;
-        updateHashTable(item);
-
-        if ((double) size / capacity >= 0.5) {
-            resize();
-        }
-    }
 
 
     @Override

@@ -302,7 +302,7 @@ public class HashDS<T> implements SequenceInterface<T> {
                             tail = previous;
                         }
                         size--;
-                        removed true;
+                        removed = true;
                     } else {
                         previous = current;
                     }

@@ -187,8 +187,8 @@ public class HashDS<T> implements SequenceInterface<T> {
 
     @Override
     public T last() {
-        if (isEmpty()) {
-            throw new EmptySequenceException("Cannot retrieve last element: Sequence is empty.");
+        if (size == 0 || tail == null) {
+            return null;
         }
         return tail.data;
     }

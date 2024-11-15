@@ -271,41 +271,45 @@ public class HashDS<T> implements SequenceInterface<T> {
 
     @Override
     public boolean remove(T item) {
+        boolean removed = false;
         int index = hash(item);
 
-        //find item in the hash table
+        //remove all matched item from hash table
         while (hashTable.get(index) != null) {
             if (hashTable.get(index).getItem().equals(item)) {
                 hashTable.set(index, null);
-
-                //remove item from the linkedlist
-                Node<T> current = head;
-                Node<T> previous = null;
-
-                while (current != null) {
-                    if (current.data.equals(item)) {
-                        if(previous == null) { //removing head
-                            head = current.next;
-                            if(head == null) {
-                                tail = null; 
-                            }
-                        }else{
-                            previous.next = current.next;
-                            if (current == tail){
-                                tail = previous;
-                            }
-                        }
-                        size--;
-                        return true;
-                    }
-                    previous = current;
-                    current = current.next;
-                }
+                removed = true;
             }
             index = (index + 1) % capacity;
         }
 
-        return false;
+        //EXTRA CREDIT: remove all matched item from linked list
+        while (head != null && head.data.equals(item)) {
+            deleteHead();
+            removed = true;
+            }
+
+        
+        Node<T> current = head;
+        Node<T> previous = null;
+
+                while (current != null) {
+                    if (current.data.equals(item)) {
+                        if (previous != null) { 
+                           previous.next = current.next;
+                        }
+                        if (current == tail) {
+                            tail = previous;
+                        }
+                        size--;
+                        removed true;
+                    } else {
+                        previous = current;
+                    }
+                    current = current.next;
+        }
+
+        return removed;
     }
 
 
